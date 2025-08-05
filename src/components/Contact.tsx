@@ -1,8 +1,10 @@
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { 
   Mail, 
   Phone, 
@@ -11,10 +13,84 @@ import {
   Facebook, 
   Youtube,
   Send,
-  MessageCircle
+  MessageCircle,
+  Loader2
 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 const Contact = () => {
+  const { toast } = useToast();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    sessionType: "",
+    message: "",
+    budgetRange: "",
+    eventDate: "",
+    location: ""
+  });
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleSelectChange = (value: string, name: string) => {
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+
+    try {
+      const { error } = await supabase
+        .from('contacts')
+        .insert([{
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone || null,
+          session_type: formData.sessionType,
+          message: formData.message,
+          budget_range: formData.budgetRange || null,
+          event_date: formData.eventDate || null,
+          location: formData.location || null
+        }]);
+
+      if (error) throw error;
+
+      toast({
+        title: "Mensagem enviada com sucesso!",
+        description: "Responderemos em até 48h úteis. Obrigado pelo contacto!",
+      });
+
+      // Reset form
+      setFormData({
+        name: "",
+        email: "",
+        phone: "",
+        sessionType: "",
+        message: "",
+        budgetRange: "",
+        eventDate: "",
+        location: ""
+      });
+
+    } catch (error) {
+      console.error('Error submitting contact form:', error);
+      toast({
+        title: "Erro ao enviar mensagem",
+        description: "Tenta novamente ou contacta-nos directamente.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <section id="contact" className="py-20 bg-background">
       <div className="container mx-auto px-6">
@@ -36,7 +112,7 @@ const Contact = () => {
                 Enviar Mensagem
               </h3>
               
-              <form className="space-y-6">
+              <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <Label htmlFor="name" className="text-sm font-medium text-foreground">
@@ -44,9 +120,13 @@ const Contact = () => {
                     </Label>
                     <Input 
                       id="name"
+                      name="name"
+                      value={formData.name}
+                      onChange={handleInputChange}
                       placeholder="O teu nome"
                       className="mt-2"
                       required
+                      disabled={isSubmitting}
                     />
                   </div>
                   <div>
@@ -55,35 +135,111 @@ const Contact = () => {
                     </Label>
                     <Input 
                       id="email"
+                      name="email"
                       type="email"
+                      value={formData.email}
+                      onChange={handleInputChange}
                       placeholder="exemplo@email.com"
                       className="mt-2"
                       required
+                      disabled={isSubmitting}
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="phone" className="text-sm font-medium text-foreground">
+                      Telefone
+                    </Label>
+                    <Input 
+                      id="phone"
+                      name="phone"
+                      type="tel"
+                      value={formData.phone}
+                      onChange={handleInputChange}
+                      placeholder="+351 xxx xxx xxx"
+                      className="mt-2"
+                      disabled={isSubmitting}
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="sessionType" className="text-sm font-medium text-foreground">
+                      Tipo de Sessão *
+                    </Label>
+                    <Select
+                      value={formData.sessionType}
+                      onValueChange={(value) => handleSelectChange(value, "sessionType")}
+                      disabled={isSubmitting}
+                    >
+                      <SelectTrigger className="mt-2">
+                        <SelectValue placeholder="Seleciona o tipo de sessão" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="casamento">Casamento</SelectItem>
+                        <SelectItem value="familia">Família</SelectItem>
+                        <SelectItem value="gestante">Gestante</SelectItem>
+                        <SelectItem value="batizado">Batizado</SelectItem>
+                        <SelectItem value="corporativo">Corporativo</SelectItem>
+                        <SelectItem value="reels">Reels & Redes Sociais</SelectItem>
+                        <SelectItem value="ensaio">Ensaio Pessoal</SelectItem>
+                        <SelectItem value="outro">Outro</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="budgetRange" className="text-sm font-medium text-foreground">
+                      Orçamento Estimado
+                    </Label>
+                    <Select
+                      value={formData.budgetRange}
+                      onValueChange={(value) => handleSelectChange(value, "budgetRange")}
+                      disabled={isSubmitting}
+                    >
+                      <SelectTrigger className="mt-2">
+                        <SelectValue placeholder="Faixa de orçamento" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="ate-500">Até €500</SelectItem>
+                        <SelectItem value="500-1000">€500 - €1.000</SelectItem>
+                        <SelectItem value="1000-2000">€1.000 - €2.000</SelectItem>
+                        <SelectItem value="2000-5000">€2.000 - €5.000</SelectItem>
+                        <SelectItem value="5000-plus">Mais de €5.000</SelectItem>
+                        <SelectItem value="a-definir">A definir</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label htmlFor="eventDate" className="text-sm font-medium text-foreground">
+                      Data Desejada
+                    </Label>
+                    <Input 
+                      id="eventDate"
+                      name="eventDate"
+                      type="date"
+                      value={formData.eventDate}
+                      onChange={handleInputChange}
+                      className="mt-2"
+                      disabled={isSubmitting}
                     />
                   </div>
                 </div>
 
                 <div>
-                  <Label htmlFor="phone" className="text-sm font-medium text-foreground">
-                    Telefone
+                  <Label htmlFor="location" className="text-sm font-medium text-foreground">
+                    Local Preferido
                   </Label>
                   <Input 
-                    id="phone"
-                    type="tel"
-                    placeholder="+351 xxx xxx xxx"
+                    id="location"
+                    name="location"
+                    value={formData.location}
+                    onChange={handleInputChange}
+                    placeholder="Ex: Porto, Lisboa, Estúdio, Exterior..."
                     className="mt-2"
-                  />
-                </div>
-
-                <div>
-                  <Label htmlFor="subject" className="text-sm font-medium text-foreground">
-                    Tipo de Sessão *
-                  </Label>
-                  <Input 
-                    id="subject"
-                    placeholder="Ex: Casamento, Família, Corporativo..."
-                    className="mt-2"
-                    required
+                    disabled={isSubmitting}
                   />
                 </div>
 
@@ -93,9 +249,13 @@ const Contact = () => {
                   </Label>
                   <Textarea 
                     id="message"
-                    placeholder="Descreve o teu projeto, data desejada, local, número de pessoas, inspirações... Quanto mais detalhes, melhor!"
+                    name="message"
+                    value={formData.message}
+                    onChange={handleInputChange}
+                    placeholder="Descreve o teu projeto, número de pessoas, inspirações, estilo pretendido... Quanto mais detalhes, melhor!"
                     className="mt-2 min-h-[120px]"
                     required
+                    disabled={isSubmitting}
                   />
                 </div>
 
@@ -103,9 +263,19 @@ const Contact = () => {
                   type="submit" 
                   size="lg" 
                   className="w-full hover-zoom shadow-elegant group"
+                  disabled={isSubmitting}
                 >
-                  <Send className="h-4 w-4 mr-2" />
-                  Enviar Mensagem
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      A enviar...
+                    </>
+                  ) : (
+                    <>
+                      <Send className="h-4 w-4 mr-2" />
+                      Enviar Mensagem
+                    </>
+                  )}
                 </Button>
 
                 <p className="text-sm text-muted-foreground text-center">
