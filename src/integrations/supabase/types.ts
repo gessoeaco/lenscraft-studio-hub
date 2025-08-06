@@ -41,6 +41,54 @@ export type Database = {
         }
         Relationships: []
       }
+      blog_posts: {
+        Row: {
+          category: string | null
+          content: string
+          created_at: string
+          excerpt: string | null
+          featured_image: string | null
+          gallery_images: string[] | null
+          id: string
+          is_published: boolean | null
+          publish_date: string | null
+          slug: string
+          tags: string[] | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          category?: string | null
+          content: string
+          created_at?: string
+          excerpt?: string | null
+          featured_image?: string | null
+          gallery_images?: string[] | null
+          id?: string
+          is_published?: boolean | null
+          publish_date?: string | null
+          slug: string
+          tags?: string[] | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string | null
+          content?: string
+          created_at?: string
+          excerpt?: string | null
+          featured_image?: string | null
+          gallery_images?: string[] | null
+          id?: string
+          is_published?: boolean | null
+          publish_date?: string | null
+          slug?: string
+          tags?: string[] | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       bookings: {
         Row: {
           client_email: string
@@ -148,6 +196,45 @@ export type Database = {
           session_type?: string | null
           status?: string | null
           updated_at?: string
+        }
+        Relationships: []
+      }
+      testimonials: {
+        Row: {
+          client_email: string | null
+          client_name: string
+          client_photo: string | null
+          created_at: string
+          id: string
+          is_approved: boolean | null
+          is_featured: boolean | null
+          rating: number | null
+          session_type: string | null
+          testimonial: string
+        }
+        Insert: {
+          client_email?: string | null
+          client_name: string
+          client_photo?: string | null
+          created_at?: string
+          id?: string
+          is_approved?: boolean | null
+          is_featured?: boolean | null
+          rating?: number | null
+          session_type?: string | null
+          testimonial: string
+        }
+        Update: {
+          client_email?: string | null
+          client_name?: string
+          client_photo?: string | null
+          created_at?: string
+          id?: string
+          is_approved?: boolean | null
+          is_featured?: boolean | null
+          rating?: number | null
+          session_type?: string | null
+          testimonial?: string
         }
         Relationships: []
       }
