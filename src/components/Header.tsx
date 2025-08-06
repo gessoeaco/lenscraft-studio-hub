@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Menu, X, Camera, Calendar, Mail } from "lucide-react";
+import BookingModal from "./BookingModal";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -40,10 +41,12 @@ const Header = () => {
 
           {/* CTA Buttons */}
           <div className="hidden md:flex items-center space-x-4">
-            <Button variant="outline" size="sm" className="hover-zoom">
-              <Calendar className="h-4 w-4 mr-2" />
-              Agendar
-            </Button>
+            <BookingModal>
+              <Button variant="outline" size="sm" className="hover-zoom">
+                <Calendar className="h-4 w-4 mr-2" />
+                Agendar
+              </Button>
+            </BookingModal>
             <Button size="sm" className="hover-zoom">
               <Mail className="h-4 w-4 mr-2" />
               Orçamento
@@ -76,10 +79,12 @@ const Header = () => {
                 </a>
               ))}
               <div className="flex flex-col space-y-3 pt-4 border-t border-border">
-                <Button variant="outline" size="sm" className="justify-start">
-                  <Calendar className="h-4 w-4 mr-2" />
-                  Agendar Sessão
-                </Button>
+                <BookingModal>
+                  <Button variant="outline" size="sm" className="justify-start">
+                    <Calendar className="h-4 w-4 mr-2" />
+                    Agendar Sessão
+                  </Button>
+                </BookingModal>
                 <Button size="sm" className="justify-start">
                   <Mail className="h-4 w-4 mr-2" />
                   Pedir Orçamento

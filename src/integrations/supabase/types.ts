@@ -14,6 +14,98 @@ export type Database = {
   }
   public: {
     Tables: {
+      available_slots: {
+        Row: {
+          created_at: string
+          day_of_week: number
+          end_time: string
+          id: string
+          is_active: boolean | null
+          start_time: string
+        }
+        Insert: {
+          created_at?: string
+          day_of_week: number
+          end_time: string
+          id?: string
+          is_active?: boolean | null
+          start_time: string
+        }
+        Update: {
+          created_at?: string
+          day_of_week?: number
+          end_time?: string
+          id?: string
+          is_active?: boolean | null
+          start_time?: string
+        }
+        Relationships: []
+      }
+      bookings: {
+        Row: {
+          client_email: string
+          client_name: string
+          client_phone: string | null
+          contact_id: string | null
+          created_at: string
+          duration_hours: number | null
+          id: string
+          location: string | null
+          notes: string | null
+          payment_status: string | null
+          price: number | null
+          session_date: string
+          session_time: string
+          session_type: string
+          status: string | null
+          updated_at: string
+        }
+        Insert: {
+          client_email: string
+          client_name: string
+          client_phone?: string | null
+          contact_id?: string | null
+          created_at?: string
+          duration_hours?: number | null
+          id?: string
+          location?: string | null
+          notes?: string | null
+          payment_status?: string | null
+          price?: number | null
+          session_date: string
+          session_time: string
+          session_type: string
+          status?: string | null
+          updated_at?: string
+        }
+        Update: {
+          client_email?: string
+          client_name?: string
+          client_phone?: string | null
+          contact_id?: string | null
+          created_at?: string
+          duration_hours?: number | null
+          id?: string
+          location?: string | null
+          notes?: string | null
+          payment_status?: string | null
+          price?: number | null
+          session_date?: string
+          session_time?: string
+          session_type?: string
+          status?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bookings_contact_id_fkey"
+            columns: ["contact_id"]
+            isOneToOne: false
+            referencedRelation: "contacts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       contacts: {
         Row: {
           budget_range: string | null

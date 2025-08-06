@@ -12,6 +12,7 @@ import {
   Calendar,
   ArrowRight 
 } from "lucide-react";
+import BookingModal from "./BookingModal";
 
 const Sessions = () => {
   const sessionTypes = [
@@ -193,14 +194,16 @@ const Sessions = () => {
                   </ul>
 
                   {/* CTA Button */}
-                  <Button 
-                    className="w-full group hover-zoom shadow-elegant mt-6"
-                    size="lg"
-                  >
-                    <Calendar className="h-4 w-4 mr-2" />
-                    Agendar Sessão
-                    <ArrowRight className="h-4 w-4 ml-2 group-hover:translate-x-1 transition-transform" />
-                  </Button>
+                  <BookingModal selectedSessionType={session.title}>
+                    <Button 
+                      className="w-full group hover-zoom shadow-elegant mt-6"
+                      size="lg"
+                    >
+                      <Calendar className="h-4 w-4 mr-2" />
+                      Agendar Sessão
+                      <ArrowRight className="h-4 w-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                    </Button>
+                  </BookingModal>
                 </div>
               </Card>
             );
