@@ -1,7 +1,7 @@
-import AdminPanel from "@/components/AdminPanel";
+import EnhancedAdminPanel from "@/components/EnhancedAdminPanel";
 
 const Admin = () => {
-  return <AdminPanel />;
+  return <EnhancedAdminPanel />;
 };
 
 export default Admin;

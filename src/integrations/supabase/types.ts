@@ -199,6 +199,116 @@ export type Database = {
         }
         Relationships: []
       }
+      portfolio_images: {
+        Row: {
+          alt_text: string | null
+          created_at: string
+          id: string
+          image_url: string
+          session_id: string
+          sort_order: number | null
+        }
+        Insert: {
+          alt_text?: string | null
+          created_at?: string
+          id?: string
+          image_url: string
+          session_id: string
+          sort_order?: number | null
+        }
+        Update: {
+          alt_text?: string | null
+          created_at?: string
+          id?: string
+          image_url?: string
+          session_id?: string
+          sort_order?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "portfolio_images_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "portfolio_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      portfolio_sessions: {
+        Row: {
+          category: string
+          cover_image: string | null
+          created_at: string
+          description: string | null
+          id: string
+          is_featured: boolean | null
+          is_published: boolean | null
+          location: string | null
+          session_date: string | null
+          slug: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          category: string
+          cover_image?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_featured?: boolean | null
+          is_published?: boolean | null
+          location?: string | null
+          session_date?: string | null
+          slug: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          cover_image?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_featured?: boolean | null
+          is_published?: boolean | null
+          location?: string | null
+          session_date?: string | null
+          slug?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      site_settings: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          setting_key: string
+          setting_type: string
+          setting_value: Json | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          setting_key: string
+          setting_type?: string
+          setting_value?: Json | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          setting_key?: string
+          setting_type?: string
+          setting_value?: Json | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       testimonials: {
         Row: {
           client_email: string | null

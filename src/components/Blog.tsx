@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -198,14 +199,16 @@ const Blog = () => {
                   )}
 
                   {/* Read More Button */}
-                  <Button 
-                    variant="ghost" 
-                    size="sm" 
-                    className="w-full justify-between group/btn hover:bg-primary/5"
-                  >
-                    <span>Ler Mais</span>
-                    <ArrowRight className="h-4 w-4 group-hover/btn:translate-x-1 transition-transform" />
-                  </Button>
+                  <Link to={`/blog/${post.slug}`}>
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      className="w-full justify-between group/btn hover:bg-primary/5"
+                    >
+                      <span>Ler Mais</span>
+                      <ArrowRight className="h-4 w-4 group-hover/btn:translate-x-1 transition-transform" />
+                    </Button>
+                  </Link>
                 </div>
               </Card>
             ))}
