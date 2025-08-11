@@ -19,7 +19,10 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
+import { useSiteSettings } from "@/hooks/useSiteSettings";
+
 const Contact = () => {
+  const { settings } = useSiteSettings();
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({

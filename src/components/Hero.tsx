@@ -1,8 +1,12 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Eye, Calendar } from "lucide-react";
 import heroImage from "@/assets/hero-photographer.jpg";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 
 const Hero = () => {
+  const { settings } = useSiteSettings();
+  const title = (settings.hero_title as string) || "";
+  const subtitle = (settings.hero_subtitle as string) || "";
   return (
     <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden">
       {/* Background Image */}
@@ -17,15 +21,27 @@ const Hero = () => {
       <div className="relative z-10 text-center text-white px-6 max-w-4xl mx-auto">
         <div className="animate-fade-in">
           <h1 className="text-5xl md:text-7xl font-serif font-bold mb-6 leading-tight">
-            Momentos passam.
-            <br />
-            <span className="text-gradient">Imagens permanecem.</span>
+            {title ? (
+              <>{title}</>
+            ) : (
+              <>
+                Momentos passam.
+                <br />
+                <span className="text-gradient">Imagens permanecem.</span>
+              </>
+            )}
           </h1>
           
           <p className="text-xl md:text-2xl mb-8 text-white/90 font-light max-w-2xl mx-auto leading-relaxed">
-            Fotografia com alma. Vídeo com verdade. 
-            <br />
-            Cada sessão é única, como o teu momento especial.
+            {subtitle ? (
+              subtitle
+            ) : (
+              <>
+                Fotografia com alma. Vídeo com verdade.
+                <br />
+                Cada sessão é única, como o teu momento especial.
+              </>
+            )}
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center animate-slide-up">
