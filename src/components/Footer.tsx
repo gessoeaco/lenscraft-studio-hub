@@ -1,7 +1,9 @@
 import { Camera, Heart, Instagram, Facebook, Youtube, Mail, Phone } from "lucide-react";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
+  const { settings } = useSiteSettings();
 
   return (
     <footer className="bg-primary text-primary-foreground">
@@ -20,19 +22,28 @@ const Footer = () => {
             </p>
             <div className="flex space-x-4">
               <a 
-                href="#" 
+                href={settings.social_links?.instagram || "#"}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Instagram"
                 className="w-10 h-10 bg-primary-foreground/10 rounded-lg flex items-center justify-center hover:bg-primary-foreground/20 transition-colors"
               >
                 <Instagram className="h-5 w-5" />
               </a>
               <a 
-                href="#" 
+                href={settings.social_links?.facebook || "#"}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Facebook"
                 className="w-10 h-10 bg-primary-foreground/10 rounded-lg flex items-center justify-center hover:bg-primary-foreground/20 transition-colors"
               >
                 <Facebook className="h-5 w-5" />
               </a>
               <a 
-                href="#" 
+                href={settings.social_links?.youtube || "#"}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="YouTube"
                 className="w-10 h-10 bg-primary-foreground/10 rounded-lg flex items-center justify-center hover:bg-primary-foreground/20 transition-colors"
               >
                 <Youtube className="h-5 w-5" />
@@ -78,11 +89,11 @@ const Footer = () => {
             <div className="space-y-3">
               <div className="flex items-center space-x-3">
                 <Mail className="h-4 w-4 text-primary-foreground/80" />
-                <span className="text-primary-foreground/80 text-sm">contato@studiovisual.pt</span>
+                <span className="text-primary-foreground/80 text-sm">{settings.social_links?.email || "contato@studiovisual.pt"}</span>
               </div>
               <div className="flex items-center space-x-3">
                 <Phone className="h-4 w-4 text-primary-foreground/80" />
-                <span className="text-primary-foreground/80 text-sm">+351 912 345 678</span>
+                <span className="text-primary-foreground/80 text-sm">{settings.social_links?.whatsapp || "+351 912 345 678"}</span>
               </div>
             </div>
           </div>

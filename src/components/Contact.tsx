@@ -100,10 +100,10 @@ const Contact = () => {
         {/* Section Header */}
         <div className="text-center mb-16 animate-fade-in">
           <h2 className="text-4xl md:text-5xl font-serif font-bold text-primary mb-6">
-            Vamos Conversar
+            {settings.contact_title || "Vamos Conversar"}
           </h2>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Tens um projeto em mente? Conta-me a tua ideia e vamos criar algo especial juntos.
+            {settings.contact_description || "Tens um projeto em mente? Conta-me a tua ideia e vamos criar algo especial juntos."}
           </p>
         </div>
 
@@ -354,30 +354,39 @@ const Contact = () => {
               
               <div className="flex space-x-4">
                 <Button 
+                  asChild
                   variant="outline" 
                   size="lg" 
                   className="flex-1 hover-zoom shadow-elegant"
                 >
-                  <Instagram className="h-5 w-5" />
+                  <a href={settings.social_links?.instagram || "#"} target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+                    <Instagram className="h-5 w-5" />
+                  </a>
                 </Button>
                 <Button 
+                  asChild
                   variant="outline" 
                   size="lg" 
                   className="flex-1 hover-zoom shadow-elegant"
                 >
-                  <Facebook className="h-5 w-5" />
+                  <a href={settings.social_links?.facebook || "#"} target="_blank" rel="noopener noreferrer" aria-label="Facebook">
+                    <Facebook className="h-5 w-5" />
+                  </a>
                 </Button>
                 <Button 
+                  asChild
                   variant="outline" 
                   size="lg" 
                   className="flex-1 hover-zoom shadow-elegant"
                 >
-                  <Youtube className="h-5 w-5" />
+                  <a href={settings.social_links?.youtube || "#"} target="_blank" rel="noopener noreferrer" aria-label="YouTube">
+                    <Youtube className="h-5 w-5" />
+                  </a>
                 </Button>
               </div>
 
               <p className="text-sm text-muted-foreground text-center mt-4">
-                @studiovisual.pt
+                {settings.social_links?.instagram?.replace(/https?:\/\/[^/]+\//, '@') || '@studiovisual.pt'}
               </p>
             </Card>
 

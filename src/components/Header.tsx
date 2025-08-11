@@ -2,9 +2,11 @@ import { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Menu, X, Camera, Calendar, Mail } from "lucide-react";
 import BookingModal from "./BookingModal";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { settings } = useSiteSettings();
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
@@ -24,7 +26,7 @@ const Header = () => {
           {/* Logo */}
           <div className="flex items-center space-x-2">
             <Camera className="h-8 w-8 text-primary" />
-            <span className="text-2xl font-serif font-semibold text-primary">Studio Visual</span>
+            <span className="text-2xl font-serif font-semibold text-primary">{settings.site_name || 'Studio Visual'}</span>
           </div>
 
           {/* Desktop Navigation */}
@@ -48,7 +50,7 @@ const Header = () => {
                 Agendar
               </Button>
             </BookingModal>
-            <Button size="sm" className="hover-zoom">
+            <Button size="sm" className="hover-zoom" onClick={() => { window.location.hash = '#contact'; }}>
               <Mail className="h-4 w-4 mr-2" />
               Orçamento
             </Button>
@@ -86,7 +88,7 @@ const Header = () => {
                     Agendar Sessão
                   </Button>
                 </BookingModal>
-                <Button size="sm" className="justify-start">
+                <Button size="sm" className="justify-start" onClick={() => { window.location.hash = '#contact'; }}>
                   <Mail className="h-4 w-4 mr-2" />
                   Pedir Orçamento
                 </Button>

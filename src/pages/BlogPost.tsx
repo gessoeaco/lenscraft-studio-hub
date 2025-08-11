@@ -65,6 +65,12 @@ const BlogPost = () => {
     return colors[category as keyof typeof colors] || "bg-gray-100 text-gray-800";
   };
 
+  // SEO: update document title
+  useEffect(() => {
+    if (post?.title) {
+      document.title = `${post.title} | Blog`;
+    }
+  }, [post?.title]);
   if (loading) {
     return (
       <div className="min-h-screen bg-background">
@@ -143,6 +149,9 @@ const BlogPost = () => {
               <img
                 src={post.featured_image}
                 alt={post.title}
+                loading="lazy"
+                decoding="async"
+                sizes="100vw"
                 className="w-full h-96 object-cover rounded-lg shadow-lg"
               />
             </div>
@@ -165,6 +174,9 @@ const BlogPost = () => {
                     key={index}
                     src={image}
                     alt={`${post.title} - Imagem ${index + 1}`}
+                    loading="lazy"
+                    decoding="async"
+                    sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
                     className="w-full h-48 object-cover rounded-lg shadow-md hover:shadow-lg transition-shadow"
                   />
                 ))}

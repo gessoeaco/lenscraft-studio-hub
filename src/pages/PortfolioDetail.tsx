@@ -87,6 +87,12 @@ const PortfolioDetail = () => {
     return colors[category as keyof typeof colors] || "bg-gray-100 text-gray-800";
   };
 
+  // SEO: update document title
+  useEffect(() => {
+    if (session?.title) {
+      document.title = `${session.title} | Portfólio`;
+    }
+  }, [session?.title]);
   if (loading) {
     return (
       <div className="min-h-screen bg-background">
@@ -177,6 +183,9 @@ const PortfolioDetail = () => {
               <img
                 src={session.cover_image}
                 alt={session.title}
+                loading="lazy"
+                decoding="async"
+                sizes="(max-width: 1024px) 100vw, 50vw"
                 className="w-full h-96 object-cover rounded-lg shadow-lg cursor-pointer"
                 onClick={() => setSelectedImage(session.cover_image)}
               />
@@ -199,6 +208,9 @@ const PortfolioDetail = () => {
                     <img
                       src={image.image_url}
                       alt={image.alt_text || session.title}
+                      loading="lazy"
+                      decoding="async"
+                      sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
                       className="w-full h-48 object-cover hover:scale-105 transition-transform duration-300"
                     />
                   </CardContent>
@@ -218,6 +230,8 @@ const PortfolioDetail = () => {
               <img
                 src={selectedImage}
                 alt={session.title}
+                loading="lazy"
+                decoding="async"
                 className="max-w-full max-h-full object-contain"
               />
               <button

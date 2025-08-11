@@ -104,6 +104,9 @@ const [portfolioItems, setPortfolioItems] = useState([]);
                     <img 
                       src={item.cover_image || "/placeholder.svg?height=400&width=600"}
                       alt={item.title}
+                      loading="lazy"
+                      decoding="async"
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                       className="w-full h-full object-cover image-zoom transition-transform duration-700"
                     />
                   </div>
