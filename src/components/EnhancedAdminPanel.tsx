@@ -9,6 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Calendar } from "@/components/ui/calendar";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { 
@@ -56,6 +57,27 @@ const EnhancedAdminPanel = () => {
     location: "",
     cover_image: ""
   });
+
+  const [newBooking, setNewBooking] = useState({
+    client_name: "",
+    client_email: "",
+    client_phone: "",
+    session_type: "",
+    session_date: "",
+    session_time: "",
+    duration_hours: 2 as number | string,
+    price: "",
+    location: "",
+    notes: "",
+    status: "pending",
+    payment_status: "unpaid"
+  });
+
+  const [editBooking, setEditBooking] = useState<any | null>(null);
+  const [editContact, setEditContact] = useState<any | null>(null);
+  const [editTestimonial, setEditTestimonial] = useState<any | null>(null);
+  const [editPost, setEditPost] = useState<any | null>(null);
+  const [editSession, setEditSession] = useState<any | null>(null);
 
   useEffect(() => {
     fetchAllData();
@@ -250,6 +272,193 @@ const EnhancedAdminPanel = () => {
     }
   };
 
+  const createBooking = async () => {
+    try {
+      const payload = {
+        client_name: newBooking.client_name,
+        client_email: newBooking.client_email,
+        client_phone: newBooking.client_phone || null,
+        session_type: newBooking.session_type,
+        session_date: newBooking.session_date,
+        session_time: newBooking.session_time,
+        duration_hours: Number(newBooking.duration_hours) || 2,
+        price: newBooking.price ? Number(newBooking.price) : null,
+        location: newBooking.location || null,
+        notes: newBooking.notes || null,
+        status: newBooking.status,
+        payment_status: newBooking.payment_status,
+      };
+
+      const { error } = await supabase.from("bookings").insert(payload);
+      if (error) throw error;
+
+      setNewBooking({
+        client_name: "",
+        client_email: "",
+        client_phone: "",
+        session_type: "",
+        session_date: "",
+        session_time: "",
+        duration_hours: 2,
+        price: "",
+        location: "",
+        notes: "",
+        status: "pending",
+        payment_status: "unpaid",
+      });
+
+      await fetchAllData();
+      toast({ title: "Agendamento criado", description: "Novo agendamento foi adicionado." });
+    } catch (error) {
+      console.error("Error creating booking:", error);
+      toast({ title: "Erro", description: "Não foi possível criar o agendamento.", variant: "destructive" });
+    }
+  };
+
+  const saveBookingEdits = async () => {
+    if (!editBooking) return;
+    try {
+      const id = editBooking.id;
+      const { error } = await supabase
+        .from("bookings")
+        .update({
+          client_name: editBooking.client_name,
+          client_email: editBooking.client_email,
+          client_phone: editBooking.client_phone,
+          session_type: editBooking.session_type,
+          session_date: editBooking.session_date,
+          session_time: editBooking.session_time,
+          duration_hours: Number(editBooking.duration_hours) || 2,
+          price: editBooking.price !== null && editBooking.price !== undefined ? Number(editBooking.price) : null,
+          location: editBooking.location,
+          notes: editBooking.notes,
+          status: editBooking.status,
+          payment_status: editBooking.payment_status,
+        })
+        .eq("id", id);
+
+      if (error) throw error;
+      setEditBooking(null);
+      await fetchAllData();
+      toast({ title: "Agendamento atualizado", description: "As alterações foram salvas." });
+    } catch (error) {
+      console.error("Error updating booking:", error);
+      toast({ title: "Erro", description: "Não foi possível salvar as alterações.", variant: "destructive" });
+    }
+  };
+
+  const saveContactEdits = async () => {
+    if (!editContact) return;
+    try {
+      const id = editContact.id;
+      const { error } = await supabase
+        .from("contacts")
+        .update({
+          name: editContact.name,
+          email: editContact.email,
+          phone: editContact.phone,
+          session_type: editContact.session_type,
+          status: editContact.status,
+          message: editContact.message,
+          location: editContact.location,
+          event_date: editContact.event_date || null,
+          budget_range: editContact.budget_range || null,
+        })
+        .eq("id", id);
+
+      if (error) throw error;
+      setEditContact(null);
+      await fetchAllData();
+      toast({ title: "Contato atualizado", description: "As alterações foram salvas." });
+    } catch (error) {
+      console.error("Error updating contact:", error);
+      toast({ title: "Erro", description: "Não foi possível salvar as alterações.", variant: "destructive" });
+    }
+  };
+
+  const saveTestimonialEdits = async () => {
+    if (!editTestimonial) return;
+    try {
+      const id = editTestimonial.id;
+      const { error } = await supabase
+        .from("testimonials")
+        .update({
+          client_name: editTestimonial.client_name,
+          client_email: editTestimonial.client_email,
+          session_type: editTestimonial.session_type,
+          testimonial: editTestimonial.testimonial,
+          rating: editTestimonial.rating ? Number(editTestimonial.rating) : null,
+          is_approved: !!editTestimonial.is_approved,
+          is_featured: !!editTestimonial.is_featured,
+        })
+        .eq("id", id);
+
+      if (error) throw error;
+      setEditTestimonial(null);
+      await fetchAllData();
+      toast({ title: "Testemunho atualizado", description: "As alterações foram salvas." });
+    } catch (error) {
+      console.error("Error updating testimonial:", error);
+      toast({ title: "Erro", description: "Não foi possível salvar as alterações.", variant: "destructive" });
+    }
+  };
+
+  const savePostEdits = async () => {
+    if (!editPost) return;
+    try {
+      const id = editPost.id;
+      const { error } = await supabase
+        .from("blog_posts")
+        .update({
+          title: editPost.title,
+          slug: editPost.slug,
+          excerpt: editPost.excerpt,
+          content: editPost.content,
+          category: editPost.category,
+          featured_image: editPost.featured_image,
+          is_published: !!editPost.is_published,
+        })
+        .eq("id", id);
+
+      if (error) throw error;
+      setEditPost(null);
+      await fetchAllData();
+      toast({ title: "Post atualizado", description: "As alterações foram salvas." });
+    } catch (error) {
+      console.error("Error updating post:", error);
+      toast({ title: "Erro", description: "Não foi possível salvar as alterações.", variant: "destructive" });
+    }
+  };
+
+  const saveSessionEdits = async () => {
+    if (!editSession) return;
+    try {
+      const id = editSession.id;
+      const { error } = await supabase
+        .from("portfolio_sessions")
+        .update({
+          title: editSession.title,
+          slug: editSession.slug,
+          category: editSession.category,
+          description: editSession.description,
+          session_date: editSession.session_date || null,
+          location: editSession.location,
+          cover_image: editSession.cover_image,
+          is_published: !!editSession.is_published,
+          is_featured: !!editSession.is_featured,
+        })
+        .eq("id", id);
+
+      if (error) throw error;
+      setEditSession(null);
+      await fetchAllData();
+      toast({ title: "Sessão atualizada", description: "As alterações foram salvas." });
+    } catch (error) {
+      console.error("Error updating session:", error);
+      toast({ title: "Erro", description: "Não foi possível salvar as alterações.", variant: "destructive" });
+    }
+  };
+
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("pt-BR");
   };
@@ -383,6 +592,56 @@ const EnhancedAdminPanel = () => {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
+                {/* Novo Agendamento */}
+                <div className="border rounded-lg p-4">
+                  <h3 className="font-semibold mb-3">Novo Agendamento</h3>
+                  <div className="grid md:grid-cols-3 gap-3">
+                    <div>
+                      <Label>Nome</Label>
+                      <Input value={newBooking.client_name} onChange={(e) => setNewBooking(v => ({...v, client_name: e.target.value}))} />
+                    </div>
+                    <div>
+                      <Label>Email</Label>
+                      <Input value={newBooking.client_email} onChange={(e) => setNewBooking(v => ({...v, client_email: e.target.value}))} />
+                    </div>
+                    <div>
+                      <Label>Telefone</Label>
+                      <Input value={newBooking.client_phone} onChange={(e) => setNewBooking(v => ({...v, client_phone: e.target.value}))} />
+                    </div>
+                    <div>
+                      <Label>Tipo de Sessão</Label>
+                      <Input value={newBooking.session_type} onChange={(e) => setNewBooking(v => ({...v, session_type: e.target.value}))} />
+                    </div>
+                    <div>
+                      <Label>Data</Label>
+                      <Input type="date" value={newBooking.session_date} onChange={(e) => setNewBooking(v => ({...v, session_date: e.target.value}))} />
+                    </div>
+                    <div>
+                      <Label>Hora</Label>
+                      <Input type="time" value={newBooking.session_time} onChange={(e) => setNewBooking(v => ({...v, session_time: e.target.value}))} />
+                    </div>
+                    <div>
+                      <Label>Duração (h)</Label>
+                      <Input type="number" value={newBooking.duration_hours as any} onChange={(e) => setNewBooking(v => ({...v, duration_hours: e.target.value}))} />
+                    </div>
+                    <div>
+                      <Label>Preço</Label>
+                      <Input type="number" step="0.01" value={newBooking.price} onChange={(e) => setNewBooking(v => ({...v, price: e.target.value}))} />
+                    </div>
+                    <div>
+                      <Label>Local</Label>
+                      <Input value={newBooking.location} onChange={(e) => setNewBooking(v => ({...v, location: e.target.value}))} />
+                    </div>
+                    <div className="md:col-span-3">
+                      <Label>Notas</Label>
+                      <Textarea value={newBooking.notes} onChange={(e) => setNewBooking(v => ({...v, notes: e.target.value}))} />
+                    </div>
+                  </div>
+                  <div className="mt-3">
+                    <Button size="sm" onClick={createBooking}>Adicionar Agendamento</Button>
+                  </div>
+                </div>
+
                 {bookings.map((booking: any) => (
                   <div key={booking.id} className="border rounded-lg p-4">
                     <div className="flex justify-between items-start mb-2">
@@ -407,7 +666,7 @@ const EnhancedAdminPanel = () => {
                         </div>
                       )}
                     </div>
-                    <div className="flex gap-2">
+                    <div className="flex gap-2 flex-wrap">
                       <Button 
                         size="sm" 
                         onClick={() => updateBookingStatus(booking.id, 'confirmed')}
@@ -422,9 +681,77 @@ const EnhancedAdminPanel = () => {
                       >
                         Cancelar
                       </Button>
+                      <Button 
+                        size="sm" 
+                        variant="secondary"
+                        onClick={() => setEditBooking(booking)}
+                      >
+                        Editar
+                      </Button>
                     </div>
                   </div>
                 ))}
+
+                {/* Dialogo Edição Agendamento */}
+                <Dialog open={!!editBooking} onOpenChange={(open) => { if (!open) setEditBooking(null); }}>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>Editar Agendamento</DialogTitle>
+                    </DialogHeader>
+                    {editBooking && (
+                      <div className="grid md:grid-cols-3 gap-3">
+                        <div>
+                          <Label>Nome</Label>
+                          <Input value={editBooking.client_name || ''} onChange={(e) => setEditBooking((v:any) => ({...v, client_name: e.target.value}))} />
+                        </div>
+                        <div>
+                          <Label>Email</Label>
+                          <Input value={editBooking.client_email || ''} onChange={(e) => setEditBooking((v:any) => ({...v, client_email: e.target.value}))} />
+                        </div>
+                        <div>
+                          <Label>Telefone</Label>
+                          <Input value={editBooking.client_phone || ''} onChange={(e) => setEditBooking((v:any) => ({...v, client_phone: e.target.value}))} />
+                        </div>
+                        <div>
+                          <Label>Tipo de Sessão</Label>
+                          <Input value={editBooking.session_type || ''} onChange={(e) => setEditBooking((v:any) => ({...v, session_type: e.target.value}))} />
+                        </div>
+                        <div>
+                          <Label>Data</Label>
+                          <Input type="date" value={editBooking.session_date || ''} onChange={(e) => setEditBooking((v:any) => ({...v, session_date: e.target.value}))} />
+                        </div>
+                        <div>
+                          <Label>Hora</Label>
+                          <Input type="time" value={editBooking.session_time || ''} onChange={(e) => setEditBooking((v:any) => ({...v, session_time: e.target.value}))} />
+                        </div>
+                        <div>
+                          <Label>Duração (h)</Label>
+                          <Input type="number" value={editBooking.duration_hours || 2} onChange={(e) => setEditBooking((v:any) => ({...v, duration_hours: e.target.value}))} />
+                        </div>
+                        <div>
+                          <Label>Preço</Label>
+                          <Input type="number" step="0.01" value={editBooking.price ?? ''} onChange={(e) => setEditBooking((v:any) => ({...v, price: e.target.value}))} />
+                        </div>
+                        <div>
+                          <Label>Status</Label>
+                          <Input value={editBooking.status || ''} onChange={(e) => setEditBooking((v:any) => ({...v, status: e.target.value}))} />
+                        </div>
+                        <div>
+                          <Label>Pagamento</Label>
+                          <Input value={editBooking.payment_status || ''} onChange={(e) => setEditBooking((v:any) => ({...v, payment_status: e.target.value}))} />
+                        </div>
+                        <div className="md:col-span-3">
+                          <Label>Notas</Label>
+                          <Textarea value={editBooking.notes || ''} onChange={(e) => setEditBooking((v:any) => ({...v, notes: e.target.value}))} />
+                        </div>
+                      </div>
+                    )}
+                    <DialogFooter>
+                      <Button variant="secondary" onClick={() => setEditBooking(null)}>Cancelar</Button>
+                      <Button onClick={saveBookingEdits}>Salvar</Button>
+                    </DialogFooter>
+                  </DialogContent>
+                </Dialog>
               </div>
             </CardContent>
           </Card>
@@ -451,16 +778,58 @@ const EnhancedAdminPanel = () => {
                       </Badge>
                     </div>
                     <p className="text-sm mb-3">{contact.message}</p>
-                    <div className="flex gap-2">
+                    <div className="flex gap-2 flex-wrap">
                       <Button 
                         size="sm" 
                         onClick={() => updateContactStatus(contact.id, 'responded')}
                       >
                         Marcar como Respondido
                       </Button>
+                      <Button size="sm" variant="secondary" onClick={() => setEditContact(contact)}>Editar</Button>
                     </div>
                   </div>
                 ))}
+
+                {/* Dialogo Edição Contato */}
+                <Dialog open={!!editContact} onOpenChange={(open) => { if (!open) setEditContact(null); }}>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>Editar Contato</DialogTitle>
+                    </DialogHeader>
+                    {editContact && (
+                      <div className="grid md:grid-cols-3 gap-3">
+                        <div>
+                          <Label>Nome</Label>
+                          <Input value={editContact.name || ''} onChange={(e) => setEditContact((v:any) => ({...v, name: e.target.value}))} />
+                        </div>
+                        <div>
+                          <Label>Email</Label>
+                          <Input value={editContact.email || ''} onChange={(e) => setEditContact((v:any) => ({...v, email: e.target.value}))} />
+                        </div>
+                        <div>
+                          <Label>Telefone</Label>
+                          <Input value={editContact.phone || ''} onChange={(e) => setEditContact((v:any) => ({...v, phone: e.target.value}))} />
+                        </div>
+                        <div>
+                          <Label>Tipo de Sessão</Label>
+                          <Input value={editContact.session_type || ''} onChange={(e) => setEditContact((v:any) => ({...v, session_type: e.target.value}))} />
+                        </div>
+                        <div>
+                          <Label>Status</Label>
+                          <Input value={editContact.status || ''} onChange={(e) => setEditContact((v:any) => ({...v, status: e.target.value}))} />
+                        </div>
+                        <div className="md:col-span-3">
+                          <Label>Mensagem</Label>
+                          <Textarea value={editContact.message || ''} onChange={(e) => setEditContact((v:any) => ({...v, message: e.target.value}))} />
+                        </div>
+                      </div>
+                    )}
+                    <DialogFooter>
+                      <Button variant="secondary" onClick={() => setEditContact(null)}>Cancelar</Button>
+                      <Button onClick={saveContactEdits}>Salvar</Button>
+                    </DialogFooter>
+                  </DialogContent>
+                </Dialog>
               </div>
             </CardContent>
           </Card>
@@ -488,16 +857,64 @@ const EnhancedAdminPanel = () => {
                       </Badge>
                     </div>
                     <p className="text-sm mb-3">"{testimonial.testimonial}"</p>
-                    {!testimonial.is_approved && (
-                      <Button 
-                        size="sm" 
-                        onClick={() => approveTestimonial(testimonial.id)}
-                      >
-                        Aprovar
-                      </Button>
-                    )}
+                    <div className="flex gap-2 flex-wrap">
+                      {!testimonial.is_approved && (
+                        <Button 
+                          size="sm" 
+                          onClick={() => approveTestimonial(testimonial.id)}
+                        >
+                          Aprovar
+                        </Button>
+                      )}
+                      <Button size="sm" variant="secondary" onClick={() => setEditTestimonial(testimonial)}>Editar</Button>
+                    </div>
                   </div>
                 ))}
+
+                {/* Dialogo Edição Testemunho */}
+                <Dialog open={!!editTestimonial} onOpenChange={(open) => { if (!open) setEditTestimonial(null); }}>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>Editar Testemunho</DialogTitle>
+                    </DialogHeader>
+                    {editTestimonial && (
+                      <div className="grid md:grid-cols-3 gap-3">
+                        <div>
+                          <Label>Nome</Label>
+                          <Input value={editTestimonial.client_name || ''} onChange={(e) => setEditTestimonial((v:any) => ({...v, client_name: e.target.value}))} />
+                        </div>
+                        <div>
+                          <Label>Email</Label>
+                          <Input value={editTestimonial.client_email || ''} onChange={(e) => setEditTestimonial((v:any) => ({...v, client_email: e.target.value}))} />
+                        </div>
+                        <div>
+                          <Label>Tipo de Sessão</Label>
+                          <Input value={editTestimonial.session_type || ''} onChange={(e) => setEditTestimonial((v:any) => ({...v, session_type: e.target.value}))} />
+                        </div>
+                        <div className="md:col-span-3">
+                          <Label>Depoimento</Label>
+                          <Textarea value={editTestimonial.testimonial || ''} onChange={(e) => setEditTestimonial((v:any) => ({...v, testimonial: e.target.value}))} />
+                        </div>
+                        <div>
+                          <Label>Nota</Label>
+                          <Input type="number" min={1} max={5} value={editTestimonial.rating ?? ''} onChange={(e) => setEditTestimonial((v:any) => ({...v, rating: e.target.value}))} />
+                        </div>
+                        <div>
+                          <Label>Aprovado</Label>
+                          <Input type="checkbox" checked={!!editTestimonial.is_approved} onChange={(e) => setEditTestimonial((v:any) => ({...v, is_approved: e.target.checked}))} />
+                        </div>
+                        <div>
+                          <Label>Destaque</Label>
+                          <Input type="checkbox" checked={!!editTestimonial.is_featured} onChange={(e) => setEditTestimonial((v:any) => ({...v, is_featured: e.target.checked}))} />
+                        </div>
+                      </div>
+                    )}
+                    <DialogFooter>
+                      <Button variant="secondary" onClick={() => setEditTestimonial(null)}>Cancelar</Button>
+                      <Button onClick={saveTestimonialEdits}>Salvar</Button>
+                    </DialogFooter>
+                  </DialogContent>
+                </Dialog>
               </div>
             </CardContent>
           </Card>
@@ -586,12 +1003,60 @@ const EnhancedAdminPanel = () => {
                           <p className="text-sm text-muted-foreground">{post.category}</p>
                           <p className="text-sm">{formatDate(post.created_at)}</p>
                         </div>
-                        <Badge variant={post.is_published ? 'default' : 'secondary'}>
-                          {post.is_published ? 'Publicado' : 'Rascunho'}
-                        </Badge>
+                        <div className="flex items-center gap-2">
+                          <Badge variant={post.is_published ? 'default' : 'secondary'}>
+                            {post.is_published ? 'Publicado' : 'Rascunho'}
+                          </Badge>
+                          <Button size="sm" variant="secondary" onClick={() => setEditPost(post)}>Editar</Button>
+                        </div>
                       </div>
                     </div>
                   ))}
+
+                  {/* Dialogo Edição Post */}
+                  <Dialog open={!!editPost} onOpenChange={(open) => { if (!open) setEditPost(null); }}>
+                    <DialogContent>
+                      <DialogHeader>
+                        <DialogTitle>Editar Post</DialogTitle>
+                      </DialogHeader>
+                      {editPost && (
+                        <div className="grid md:grid-cols-2 gap-3">
+                          <div>
+                            <Label>Título</Label>
+                            <Input value={editPost.title || ''} onChange={(e) => setEditPost((v:any) => ({...v, title: e.target.value}))} />
+                          </div>
+                          <div>
+                            <Label>Slug</Label>
+                            <Input value={editPost.slug || ''} onChange={(e) => setEditPost((v:any) => ({...v, slug: e.target.value}))} />
+                          </div>
+                          <div className="md:col-span-2">
+                            <Label>Resumo</Label>
+                            <Textarea value={editPost.excerpt || ''} onChange={(e) => setEditPost((v:any) => ({...v, excerpt: e.target.value}))} />
+                          </div>
+                          <div className="md:col-span-2">
+                            <Label>Conteúdo</Label>
+                            <Textarea rows={8} value={editPost.content || ''} onChange={(e) => setEditPost((v:any) => ({...v, content: e.target.value}))} />
+                          </div>
+                          <div>
+                            <Label>Categoria</Label>
+                            <Input value={editPost.category || ''} onChange={(e) => setEditPost((v:any) => ({...v, category: e.target.value}))} />
+                          </div>
+                          <div>
+                            <Label>Imagem</Label>
+                            <Input value={editPost.featured_image || ''} onChange={(e) => setEditPost((v:any) => ({...v, featured_image: e.target.value}))} />
+                          </div>
+                          <div>
+                            <Label>Publicado</Label>
+                            <Input type="checkbox" checked={!!editPost.is_published} onChange={(e) => setEditPost((v:any) => ({...v, is_published: e.target.checked}))} />
+                          </div>
+                        </div>
+                      )}
+                      <DialogFooter>
+                        <Button variant="secondary" onClick={() => setEditPost(null)}>Cancelar</Button>
+                        <Button onClick={savePostEdits}>Salvar</Button>
+                      </DialogFooter>
+                    </DialogContent>
+                  </Dialog>
                 </div>
               </CardContent>
             </Card>
@@ -689,12 +1154,68 @@ const EnhancedAdminPanel = () => {
                             <p className="text-sm">{formatDate(session.session_date)}</p>
                           )}
                         </div>
-                        <Badge variant={session.is_published ? 'default' : 'secondary'}>
-                          {session.is_published ? 'Publicado' : 'Rascunho'}
-                        </Badge>
+                        <div className="flex items-center gap-2">
+                          <Badge variant={session.is_published ? 'default' : 'secondary'}>
+                            {session.is_published ? 'Publicado' : 'Rascunho'}
+                          </Badge>
+                          <Button size="sm" variant="secondary" onClick={() => setEditSession(session)}>Editar</Button>
+                        </div>
                       </div>
                     </div>
                   ))}
+
+                  {/* Dialogo Edição Sessão */}
+                  <Dialog open={!!editSession} onOpenChange={(open) => { if (!open) setEditSession(null); }}>
+                    <DialogContent>
+                      <DialogHeader>
+                        <DialogTitle>Editar Sessão</DialogTitle>
+                      </DialogHeader>
+                      {editSession && (
+                        <div className="grid md:grid-cols-2 gap-3">
+                          <div>
+                            <Label>Título</Label>
+                            <Input value={editSession.title || ''} onChange={(e) => setEditSession((v:any) => ({...v, title: e.target.value}))} />
+                          </div>
+                          <div>
+                            <Label>Slug</Label>
+                            <Input value={editSession.slug || ''} onChange={(e) => setEditSession((v:any) => ({...v, slug: e.target.value}))} />
+                          </div>
+                          <div>
+                            <Label>Categoria</Label>
+                            <Input value={editSession.category || ''} onChange={(e) => setEditSession((v:any) => ({...v, category: e.target.value}))} />
+                          </div>
+                          <div>
+                            <Label>Local</Label>
+                            <Input value={editSession.location || ''} onChange={(e) => setEditSession((v:any) => ({...v, location: e.target.value}))} />
+                          </div>
+                          <div>
+                            <Label>Data</Label>
+                            <Input type="date" value={editSession.session_date || ''} onChange={(e) => setEditSession((v:any) => ({...v, session_date: e.target.value}))} />
+                          </div>
+                          <div className="md:col-span-2">
+                            <Label>Descrição</Label>
+                            <Textarea value={editSession.description || ''} onChange={(e) => setEditSession((v:any) => ({...v, description: e.target.value}))} />
+                          </div>
+                          <div className="md:col-span-2">
+                            <Label>Imagem de Capa</Label>
+                            <Input value={editSession.cover_image || ''} onChange={(e) => setEditSession((v:any) => ({...v, cover_image: e.target.value}))} />
+                          </div>
+                          <div>
+                            <Label>Publicado</Label>
+                            <Input type="checkbox" checked={!!editSession.is_published} onChange={(e) => setEditSession((v:any) => ({...v, is_published: e.target.checked}))} />
+                          </div>
+                          <div>
+                            <Label>Destaque</Label>
+                            <Input type="checkbox" checked={!!editSession.is_featured} onChange={(e) => setEditSession((v:any) => ({...v, is_featured: e.target.checked}))} />
+                          </div>
+                        </div>
+                      )}
+                      <DialogFooter>
+                        <Button variant="secondary" onClick={() => setEditSession(null)}>Cancelar</Button>
+                        <Button onClick={saveSessionEdits}>Salvar</Button>
+                      </DialogFooter>
+                    </DialogContent>
+                  </Dialog>
                 </div>
               </CardContent>
             </Card>
