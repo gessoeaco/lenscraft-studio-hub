@@ -483,18 +483,18 @@ const EnhancedAdminPanel = () => {
   }
 
   return (
-    <div className="container mx-auto p-6">
-      <h1 className="text-3xl font-bold mb-8">Painel Administrativo</h1>
+    <div className="container mx-auto p-6 animate-fade-in">
+      <h1 className="text-4xl font-bold mb-8 text-gradient animate-slide-up">Painel Administrativo</h1>
 
       <Tabs defaultValue="dashboard" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-7">
-          <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
-          <TabsTrigger value="bookings">Agendamentos</TabsTrigger>
-          <TabsTrigger value="contacts">Contatos</TabsTrigger>
-          <TabsTrigger value="testimonials">Testemunhos</TabsTrigger>
-          <TabsTrigger value="blog">Blog</TabsTrigger>
-          <TabsTrigger value="portfolio">Portfólio</TabsTrigger>
-          <TabsTrigger value="settings">Configurações</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-7 shadow-elegant animate-scale-in">
+          <TabsTrigger value="dashboard" className="transition-all duration-200 hover:scale-105">Dashboard</TabsTrigger>
+          <TabsTrigger value="bookings" className="transition-all duration-200 hover:scale-105">Agendamentos</TabsTrigger>
+          <TabsTrigger value="contacts" className="transition-all duration-200 hover:scale-105">Contatos</TabsTrigger>
+          <TabsTrigger value="testimonials" className="transition-all duration-200 hover:scale-105">Testemunhos</TabsTrigger>
+          <TabsTrigger value="blog" className="transition-all duration-200 hover:scale-105">Blog</TabsTrigger>
+          <TabsTrigger value="portfolio" className="transition-all duration-200 hover:scale-105">Portfólio</TabsTrigger>
+          <TabsTrigger value="settings" className="transition-all duration-200 hover:scale-105">Configurações</TabsTrigger>
         </TabsList>
 
         <TabsContent value="dashboard">
@@ -593,8 +593,14 @@ const EnhancedAdminPanel = () => {
             <CardContent>
               <div className="space-y-4">
                 {/* Novo Agendamento */}
-                <div className="border rounded-lg p-4">
-                  <h3 className="font-semibold mb-3">Novo Agendamento</h3>
+                <Card className="shadow-elegant hover-zoom">
+                  <CardHeader className="pb-4">
+                    <CardTitle className="flex items-center gap-2">
+                      <CalendarIcon className="h-5 w-5" />
+                      Novo Agendamento
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
                   <div className="grid md:grid-cols-3 gap-3">
                     <div>
                       <Label>Nome</Label>
@@ -637,13 +643,17 @@ const EnhancedAdminPanel = () => {
                       <Textarea value={newBooking.notes} onChange={(e) => setNewBooking(v => ({...v, notes: e.target.value}))} />
                     </div>
                   </div>
-                  <div className="mt-3">
-                    <Button size="sm" onClick={createBooking}>Adicionar Agendamento</Button>
+                  <div className="mt-4">
+                    <Button size="sm" onClick={createBooking} className="transition-all duration-200 hover:scale-105">
+                      Adicionar Agendamento
+                    </Button>
                   </div>
-                </div>
+                  </CardContent>
+                </Card>
 
-                {bookings.map((booking: any) => (
-                  <div key={booking.id} className="border rounded-lg p-4">
+                {bookings.map((booking: any, index: any) => (
+                  <Card key={booking.id} className="shadow-elegant hover-zoom animate-fade-in" style={{animationDelay: `${index * 0.1}s`}}>
+                    <CardContent className="pt-4">
                     <div className="flex justify-between items-start mb-2">
                       <div>
                         <h3 className="font-semibold">{booking.client_name}</h3>
@@ -671,6 +681,7 @@ const EnhancedAdminPanel = () => {
                         size="sm" 
                         onClick={() => updateBookingStatus(booking.id, 'confirmed')}
                         disabled={booking.status === 'confirmed'}
+                        className="transition-all duration-200 hover:scale-105"
                       >
                         Confirmar
                       </Button>
@@ -678,6 +689,7 @@ const EnhancedAdminPanel = () => {
                         size="sm" 
                         variant="outline"
                         onClick={() => updateBookingStatus(booking.id, 'cancelled')}
+                        className="transition-all duration-200 hover:scale-105"
                       >
                         Cancelar
                       </Button>
@@ -685,11 +697,13 @@ const EnhancedAdminPanel = () => {
                         size="sm" 
                         variant="secondary"
                         onClick={() => setEditBooking(booking)}
+                        className="transition-all duration-200 hover:scale-105"
                       >
                         Editar
                       </Button>
                     </div>
-                  </div>
+                    </CardContent>
+                  </Card>
                 ))}
 
                 {/* Dialogo Edição Agendamento */}
@@ -757,16 +771,20 @@ const EnhancedAdminPanel = () => {
           </Card>
         </TabsContent>
 
-        <TabsContent value="contacts">
-          <Card>
+        <TabsContent value="contacts" className="animate-fade-in">
+          <Card className="shadow-elegant">
             <CardHeader>
-              <CardTitle>Mensagens de Contato</CardTitle>
+              <CardTitle className="flex items-center gap-2">
+                <Mail className="h-5 w-5" />
+                Mensagens de Contato
+              </CardTitle>
               <CardDescription>Gerencie todas as mensagens recebidas</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {contacts.map((contact: any) => (
-                  <div key={contact.id} className="border rounded-lg p-4">
+                {contacts.map((contact: any, index: any) => (
+                  <Card key={contact.id} className="shadow-elegant hover-zoom animate-fade-in" style={{animationDelay: `${index * 0.1}s`}}>
+                    <CardContent className="pt-4">
                     <div className="flex justify-between items-start mb-2">
                       <div>
                         <h3 className="font-semibold">{contact.name}</h3>
@@ -782,12 +800,21 @@ const EnhancedAdminPanel = () => {
                       <Button 
                         size="sm" 
                         onClick={() => updateContactStatus(contact.id, 'responded')}
+                        className="transition-all duration-200 hover:scale-105"
                       >
                         Marcar como Respondido
                       </Button>
-                      <Button size="sm" variant="secondary" onClick={() => setEditContact(contact)}>Editar</Button>
+                      <Button 
+                        size="sm" 
+                        variant="secondary" 
+                        onClick={() => setEditContact(contact)}
+                        className="transition-all duration-200 hover:scale-105"
+                      >
+                        Editar
+                      </Button>
                     </div>
-                  </div>
+                    </CardContent>
+                  </Card>
                 ))}
 
                 {/* Dialogo Edição Contato */}
@@ -835,16 +862,20 @@ const EnhancedAdminPanel = () => {
           </Card>
         </TabsContent>
 
-        <TabsContent value="testimonials">
-          <Card>
+        <TabsContent value="testimonials" className="animate-fade-in">
+          <Card className="shadow-elegant">
             <CardHeader>
-              <CardTitle>Testemunhos</CardTitle>
+              <CardTitle className="flex items-center gap-2">
+                <Star className="h-5 w-5" />
+                Testemunhos
+              </CardTitle>
               <CardDescription>Aprove testemunhos para exibição no site</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {testimonials.map((testimonial: any) => (
-                  <div key={testimonial.id} className="border rounded-lg p-4">
+                {testimonials.map((testimonial: any, index: any) => (
+                  <Card key={testimonial.id} className="shadow-elegant hover-zoom animate-fade-in" style={{animationDelay: `${index * 0.1}s`}}>
+                    <CardContent className="pt-4">
                     <div className="flex justify-between items-start mb-2">
                       <div>
                         <h3 className="font-semibold">{testimonial.client_name}</h3>
@@ -862,13 +893,22 @@ const EnhancedAdminPanel = () => {
                         <Button 
                           size="sm" 
                           onClick={() => approveTestimonial(testimonial.id)}
+                          className="transition-all duration-200 hover:scale-105"
                         >
                           Aprovar
                         </Button>
                       )}
-                      <Button size="sm" variant="secondary" onClick={() => setEditTestimonial(testimonial)}>Editar</Button>
+                      <Button 
+                        size="sm" 
+                        variant="secondary" 
+                        onClick={() => setEditTestimonial(testimonial)}
+                        className="transition-all duration-200 hover:scale-105"
+                      >
+                        Editar
+                      </Button>
                     </div>
-                  </div>
+                    </CardContent>
+                  </Card>
                 ))}
 
                 {/* Dialogo Edição Testemunho */}

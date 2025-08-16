@@ -129,7 +129,7 @@ Elegant neutral palette to enhance visual content
   }
 }
 
-/* Custom animations for photography portfolio */
+/* Enhanced Photography Portfolio Animations */
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(20px); }
   to { opacity: 1; transform: translateY(0); }
@@ -145,10 +145,25 @@ Elegant neutral palette to enhance visual content
   to { opacity: 1; transform: translateY(0); }
 }
 
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(30px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.8; }
+}
+
 /* Portfolio hover effects */
 @keyframes imageZoom {
   from { transform: scale(1); }
   to { transform: scale(1.05); }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
 }
 
 @layer utilities {
@@ -162,6 +177,14 @@ Elegant neutral palette to enhance visual content
   
   .animate-slide-up {
     animation: slideUp 0.7s ease-out;
+  }
+  
+  .animate-slide-in-right {
+    animation: slideInRight 0.6s ease-out;
+  }
+  
+  .animate-pulse-subtle {
+    animation: pulse 2s ease-in-out infinite;
   }
   
   .hover-zoom {
@@ -193,5 +216,26 @@ Elegant neutral palette to enhance visual content
   
   .shadow-elegant {
     box-shadow: var(--shadow-elegant);
+  }
+  
+  .loading-shimmer {
+    background: linear-gradient(90deg, transparent, hsl(var(--muted) / 0.4), transparent);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+  }
+  
+  .glass-effect {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  
+  .hover-lift {
+    transition: var(--transition-smooth);
+  }
+  
+  .hover-lift:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-portfolio);
   }
 }

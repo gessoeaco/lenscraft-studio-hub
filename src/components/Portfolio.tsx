@@ -96,9 +96,9 @@ const [portfolioItems, setPortfolioItems] = useState([]);
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 animate-slide-up">
-            {filteredItems.map((item: any) => (
-              <Link key={item.id} to={`/portfolio/${item.slug}`}>
-                <div className="group relative overflow-hidden rounded-lg shadow-portfolio hover:shadow-xl transition-all duration-500 hover-zoom bg-card">
+            {filteredItems.map((item: any, index: any) => (
+              <Link key={item.id} to={`/portfolio/${item.slug}`} className="animate-fade-in" style={{animationDelay: `${index * 0.1}s`}}>
+                <div className="group relative overflow-hidden rounded-lg shadow-portfolio hover:shadow-xl transition-all duration-500 hover-lift bg-card">
                   {/* Image */}
                   <div className="aspect-[4/5] overflow-hidden">
                     <img 
