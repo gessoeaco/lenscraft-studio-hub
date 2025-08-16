@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, Calendar, MapPin, ImageIcon } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
+import PortfolioGallery from "@/components/PortfolioGallery";
 
 interface PortfolioSession {
   id: string;
@@ -30,7 +30,6 @@ const PortfolioDetail = () => {
   const [session, setSession] = useState<PortfolioSession | null>(null);
   const [images, setImages] = useState<PortfolioImage[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchPortfolioData = async () => {
@@ -141,16 +140,18 @@ const PortfolioDetail = () => {
         </div>
 
         {/* Main content */}
-        <div className="grid gap-12 lg:grid-cols-2">
+        <div className="grid gap-12 lg:grid-cols-2 animate-fade-in">
           {/* Session details */}
           <div className="space-y-6">
             <div>
               <Badge className={getCategoryColor(session.category)}>
                 {session.category}
               </Badge>
-              <h1 className="text-4xl font-bold mt-4 mb-6">{session.title}</h1>
+              <h1 className="text-4xl font-serif font-bold mt-4 mb-6 animate-slide-in-right">
+                {session.title}
+              </h1>
               
-              <div className="flex flex-wrap gap-4 text-muted-foreground mb-6">
+              <div className="flex flex-wrap gap-4 text-muted-foreground mb-6 animate-fade-in" style={{animationDelay: '0.2s'}}>
                 {session.session_date && (
                   <div className="flex items-center gap-2">
                     <Calendar className="h-4 w-4" />
@@ -170,8 +171,8 @@ const PortfolioDetail = () => {
               </div>
 
               {session.description && (
-                <div className="prose prose-gray max-w-none">
-                  <p className="text-lg leading-relaxed">{session.description}</p>
+                <div className="prose prose-gray max-w-none animate-fade-in" style={{animationDelay: '0.4s'}}>
+                  <p className="text-lg leading-relaxed text-muted-foreground">{session.description}</p>
                 </div>
               )}
             </div>
@@ -179,70 +180,29 @@ const PortfolioDetail = () => {
 
           {/* Featured image */}
           {session.cover_image && (
-            <div className="relative">
-              <img
-                src={session.cover_image}
-                alt={session.title}
-                loading="lazy"
-                decoding="async"
-                sizes="(max-width: 1024px) 100vw, 50vw"
-                className="w-full h-96 object-cover rounded-lg shadow-lg cursor-pointer"
-                onClick={() => setSelectedImage(session.cover_image)}
-              />
+            <div className="relative animate-scale-in" style={{animationDelay: '0.3s'}}>
+              <div className="aspect-[4/5] overflow-hidden rounded-lg shadow-portfolio">
+                <img
+                  src={session.cover_image}
+                  alt={session.title}
+                  loading="lazy"
+                  decoding="async"
+                  sizes="(max-width: 1024px) 100vw, 50vw"
+                  className="w-full h-full object-cover hover-lift transition-transform duration-500"
+                />
+              </div>
             </div>
           )}
         </div>
 
-        {/* Image gallery */}
-        {images.length > 0 && (
-          <div className="mt-16">
-            <h2 className="text-2xl font-bold mb-8 text-center">Galeria</h2>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-              {images.map((image) => (
-                <Card
-                  key={image.id}
-                  className="overflow-hidden cursor-pointer hover:shadow-lg transition-shadow"
-                  onClick={() => setSelectedImage(image.image_url)}
-                >
-                  <CardContent className="p-0">
-                    <img
-                      src={image.image_url}
-                      alt={image.alt_text || session.title}
-                      loading="lazy"
-                      decoding="async"
-                      sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
-                      className="w-full h-48 object-cover hover:scale-105 transition-transform duration-300"
-                    />
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Lightbox */}
-        {selectedImage && (
-          <div
-            className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4"
-            onClick={() => setSelectedImage(null)}
-          >
-            <div className="relative max-w-4xl max-h-full">
-              <img
-                src={selectedImage}
-                alt={session.title}
-                loading="lazy"
-                decoding="async"
-                className="max-w-full max-h-full object-contain"
-              />
-              <button
-                onClick={() => setSelectedImage(null)}
-                className="absolute top-4 right-4 text-white hover:text-gray-300 text-2xl"
-              >
-                ×
-              </button>
-            </div>
-          </div>
-        )}
+        {/* Enhanced Image Gallery */}
+        <div className="mt-16 animate-slide-up">
+          <PortfolioGallery
+            images={images}
+            coverImage={session.cover_image}
+            title={session.title}
+          />
+        </div>
       </div>
     </div>
   );
